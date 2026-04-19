@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shagun Bakery – शगुन बेकरी | Saguna More, Patna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --brown-deep:   #92400E;
+      --brown-mid:    #B45309;
+      --brown-light:  #D97706;
+      --cream-bg:     #FEF3C7;
+      --cream-light:  #FFFBEB;
+      --text-dark:    #78350F;
+      --text-mid:     #92400E;
+      --gold:         #F59E0B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: var(--cream-light);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* ─── Cursor ─── */
+    .cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--brown-mid);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9999;
+      transition: transform 0.1s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 2px solid var(--brown-light);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9998;
+      transition: transform 0.18s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring.hovered { width: 48px; height: 48px; border-color: var(--gold); }
+
+    /* ─── Scroll Reveal ─── */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ─── Stagger delays ─── */
+    .delay-100 { transition-delay: 0.1s; }
+    .delay-200 { transition-delay: 0.2s; }
+    .delay-300 { transition-delay: 0.3s; }
+    .delay-400 { transition-delay: 0.4s; }
+    .delay-500 { transition-delay: 0.5s; }
+    .delay-600 { transition-delay: 0.6s; }
+
+    /* ─── Navbar ─── */
+    nav {
+      position: fixed; top: 16px; left: 16px; right: 16px; z-index: 100;
+      background: rgba(254, 243, 199, 0.80);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(180, 83, 9, 0.18);
+      border-radius: 20px;
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    nav.scrolled { background: rgba(254, 243, 199, 0.96); box-shadow: 0 8px 32px rgba(120, 53, 15, 0.12); }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--brown-deep); letter-spacing: -0.01em; }
+    .nav-logo span { color: var(--brown-light); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--text-dark); text-decoration: none; transition: color 0.2s ease; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1.5px; background: var(--brown-mid); transition: width 0.25s ease; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--brown-mid); }
+    .nav-cta { background: var(--brown-deep); color: #FEF3C7; font-size: 0.875rem; font-weight: 600; padding: 9px 22px; border-radius: 12px; text-decoration: none; transition: background 0.2s ease, transform 0.15s ease; cursor: pointer; }
+    .nav-cta:hover { background: var(--brown-mid); transform: translateY(-1px); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 2px; background: var(--brown-deep); border-radius: 2px; transition: all 0.3s ease; }
+
+    /* ─── Hero ─── */
+    #hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 40%, #FBBF24 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding-top: 90px;
+    }
+    .hero-blob {
+      position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35;
+      animation: blobFloat 8s ease-in-out infinite;
+    }
+    .hero-blob-1 { width: 500px; height: 500px; background: #F59E0B; top: -100px; right: -80px; animation-delay: 0s; }
+    .hero-blob-2 { width: 380px; height: 380px; background: #B45309; bottom: -60px; left: -60px; animation-delay: -3s; }
+    .hero-blob-3 { width: 260px; height: 260px; background: #FDE68A; top: 40%; left: 30%; animation-delay: -5s; }
+    @keyframes blobFloat { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(20px,-30px) scale(1.05); } 66% { transform: translate(-15px,20px) scale(0.95); } }
+
+    .hero-content { position: relative; z-index: 2; text-align: center; max-width: 820px; padding: 0 24px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(146, 64, 14, 0.12); border: 1px solid rgba(146, 64, 14, 0.25); color: var(--brown-deep); font-size: 0.8rem; font-weight: 600; padding: 6px 16px; border-radius: 100px; margin-bottom: 24px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .hero-badge svg { width: 14px; height: 14px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; color: var(--text-dark); line-height: 1.05; margin-bottom: 12px; }
+    .hero-title span { color: var(--brown-mid); font-style: italic; }
+    .hero-devanagari { font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--brown-deep); font-weight: 600; margin-bottom: 20px; opacity: 0.75; letter-spacing: 0.04em; }
+    .hero-subtitle { font-size: clamp(1rem, 2vw, 1.2rem); color: #92400E; max-width: 520px; margin: 0 auto 40px; line-height: 1.7; font-weight: 400; }
+    .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--brown-deep); color: #FEF3C7; font-weight: 700; font-size: 1rem; padding: 14px 34px; border-radius: 16px; text-decoration: none; cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(146,64,14,0.3); display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: var(--brown-mid); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(146,64,14,0.4); }
+    .btn-secondary { background: transparent; color: var(--brown-deep); font-weight: 600; font-size: 1rem; padding: 13px 32px; border-radius: 16px; text-decoration: none; cursor: pointer; border: 2px solid var(--brown-deep); transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-secondary:hover { background: var(--brown-deep); color: #FEF3C7; transform: translateY(-2px); }
+
+    .hero-stats { display: flex; gap: 40px; justify-content: center; margin-top: 52px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 800; color: var(--brown-deep); }
+    .stat-label { font-size: 0.8rem; color: var(--brown-mid); font-weight: 500; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ─── Floating pastries ─── */
+    .pastry { position: absolute; font-size: 2.5rem; pointer-events: none; z-index: 1; }
+    .pastry-1 { top: 18%; left: 8%; animation: floatA 6s ease-in-out infinite; }
+    .pastry-2 { top: 60%; left: 5%; animation: floatB 7s ease-in-out infinite; }
+    .pastry-3 { top: 20%; right: 7%; animation: floatA 5s ease-in-out infinite 1s; }
+    .pastry-4 { top: 65%; right: 6%; animation: floatB 8s ease-in-out infinite 0.5s; }
+    .pastry-5 { bottom: 12%; left: 20%; animation: floatA 6.5s ease-in-out infinite 2s; }
+    @keyframes floatA { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(8deg); } }
+    @keyframes floatB { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(18px) rotate(-6deg); } }
+
+    /* ─── Section commons ─── */
+    section { padding: 100px 24px; }
+    .section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brown-mid); margin-bottom: 12px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; color: var(--text-dark); margin-bottom: 16px; line-height: 1.15; }
+    .section-desc { font-size: 1.05rem; color: #92400E; max-width: 500px; line-height: 1.75; }
+
+    /* ─── Menu ─── */
+    #menu { background: #FFF7ED; }
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; }
+    .menu-card {
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(180,83,9,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .menu-card:hover { transform: translateY(-8px); box-shadow: 0 24px 48px rgba(120,53,15,0.15); }
+    .menu-card-img { height: 200px; display: flex; align-items: center; justify-content: center; font-size: 6rem; position: relative; overflow: hidden; }
+    .menu-card-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(120,53,15,0.08)); }
+    .menu-tag { position: absolute; top: 14px; right: 14px; background: var(--brown-deep); color: #FEF3C7; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 100px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .menu-card-body { padding: 20px 22px 22px; }
+    .menu-card-name { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+    .menu-card-desc { font-size: 0.85rem; color: #92400E; line-height: 1.6; margin-bottom: 14px; }
+    .menu-card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .menu-price { font-family: 'Poppins', sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--brown-deep); }
+    .menu-add { width: 34px; height: 34px; border-radius: 10px; background: var(--cream-bg); color: var(--brown-deep); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, transform 0.15s; border: none; font-size: 1.2rem; font-weight: 700; }
+    .menu-add:hover { background: var(--brown-deep); color: #FEF3C7; transform: scale(1.1); }
+
+    /* ─── About ─── */
+    #about { background: linear-gradient(135deg, var(--cream-bg) 0%, #FDE68A 100%); }
+    .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+    .about-visual { position: relative; }
+    .about-circle { width: 380px; height: 380px; border-radius: 50%; background: linear-gradient(135deg, #FDE68A, #FBBF24); display: flex; align-items: center; justify-content: center; font-size: 9rem; position: relative; animation: gentlePulse 4s ease-in-out infinite; margin: 0 auto; }
+    @keyframes gentlePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    .about-badge { position: absolute; background: var(--brown-deep); color: #FEF3C7; border-radius: 16px; padding: 10px 16px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+    .about-badge-1 { top: 30px; right: -20px; animation: badgeFloat 5s ease-in-out infinite; }
+    .about-badge-2 { bottom: 50px; left: -20px; animation: badgeFloat 4s ease-in-out infinite 1s; }
+    @keyframes badgeFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .about-features { display: flex; flex-direction: column; gap: 20px; margin-top: 32px; }
+    .feature-item { display: flex; gap: 16px; align-items: flex-start; }
+    .feature-icon { width: 44px; height: 44px; background: rgba(146,64,14,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--brown-deep); }
+    .feature-icon svg { width: 20px; height: 20px; }
+    .feature-text h4 { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 3px; }
+    .feature-text p { font-size: 0.85rem; color: #92400E; line-height: 1.6; }
+
+    /* ─── Reviews ─── */
+    #reviews { background: #FFF7ED; }
+    .reviews-header { max-width: 1100px; margin: 0 auto 56px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .rating-big { display: flex; align-items: center; gap: 20px; }
+    .rating-number { font-family: 'Poppins', sans-serif; font-size: 5rem; font-weight: 900; color: var(--brown-deep); line-height: 1; }
+    .rating-stars { display: flex; gap: 4px; margin-bottom: 6px; }
+    .rating-star { color: var(--gold); font-size: 1.4rem; }
+    .rating-count { font-size: 0.9rem; color: #92400E; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .review-card { background: #fff; border-radius: 20px; padding: 26px; border: 1px solid rgba(180,83,9,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+    .review-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(120,53,15,0.12); }
+    .review-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .reviewer-avatar { width: 44px; height: 44px; border-radius: 50%; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'Poppins', sans-serif; flex-shrink: 0; }
+    .reviewer-info h4 { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); }
+    .reviewer-info p { font-size: 0.78rem; color: #92400E; }
+    .review-stars { display: flex; gap: 2px; margin-bottom: 10px; }
+    .review-star { color: var(--gold); font-size: 0.9rem; }
+    .review-text { font-size: 0.88rem; color: #78350F; line-height: 1.7; }
+
+    /* ─── Info strip ─── */
+    #info { background: var(--brown-deep); }
+    .info-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px; }
+    .info-item { display: flex; gap: 16px; align-items: flex-start; }
+    .info-icon { width: 46px; height: 46px; background: rgba(254,243,199,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #FEF3C7; }
+    .info-icon svg { width: 22px; height: 22px; }
+    .info-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(254,243,199,0.6); margin-bottom: 4px; font-weight: 600; }
+    .info-value { font-size: 0.95rem; color: #FEF3C7; font-weight: 600; line-height: 1.5; }
+
+    /* ─── Order CTA ─── */
+    #order { background: linear-gradient(135deg, #B45309 0%, #92400E 100%); text-align: center; }
+    .order-inner { max-width: 700px; margin: 0 auto; }
+    .order-inner h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); color: #FEF3C7; margin-bottom: 16px; line-height: 1.2; }
+    .order-inner p { font-size: 1.1rem; color: rgba(254,243,199,0.85); margin-bottom: 36px; line-height: 1.7; }
+    .order-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-cream { background: #FEF3C7; color: var(--brown-deep); font-weight: 700; font-size: 1rem; padding: 14px 34px; border-radius: 16px; text-decoration: none; cursor: pointer; transition: background 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-cream:hover { background: #FFFBEB; transform: translateY(-2px); }
+    .btn-outline-cream { background: transparent; color: #FEF3C7; font-weight: 600; font-size: 1rem; padding: 13px 32px; border-radius: 16px; text-decoration: none; cursor: pointer; border: 2px solid rgba(254,243,199,0.5); transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-outline-cream:hover { border-color: #FEF3C7; background: rgba(254,243,199,0.1); transform: translateY(-2px); }
+
+    /* ─── Footer ─── */
+    footer { background: #451a03; padding: 52px 24px 36px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top { display: flex; gap: 60px; flex-wrap: wrap; margin-bottom: 48px; }
+    .footer-brand { flex: 1; min-width: 220px; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #FEF3C7; margin-bottom: 10px; }
+    .footer-logo span { color: var(--gold); }
+    .footer-tagline { font-size: 0.88rem; color: rgba(254,243,199,0.6); line-height: 1.65; max-width: 280px; }
+    .footer-col h5 { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(254,243,199,0.5); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 0.9rem; color: rgba(254,243,199,0.8); text-decoration: none; transition: color 0.2s; }
+    .footer-col a:hover { color: #FEF3C7; }
+    .footer-bottom { border-top: 1px solid rgba(254,243,199,0.1); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap-12px; }
+    .footer-bottom p { font-size: 0.82rem; color: rgba(254,243,199,0.45); }
+
+    /* ─── Scroll progress bar ─── */
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--brown-mid), var(--gold)); z-index: 999; transition: width 0.1s linear; width: 0%; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .about-circle { width: 260px; height: 260px; font-size: 6rem; }
+      .pastry { font-size: 1.8rem; }
+      .hero-stats { gap: 24px; }
+      .about-badge-1 { right: 0; }
+      .about-badge-2 { left: 0; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2.6rem; }
+      section { padding: 72px 16px; }
+    }
+
+    /* ─── Reduced motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      .reveal, .reveal-left, .reveal-right { opacity: 1; transform: none; }
+    }
+
+    /* ─── Mobile menu ─── */
+    #mobile-menu { position: fixed; inset: 0; background: rgba(254,243,199,0.97); backdrop-filter: blur(20px); z-index: 200; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a { font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text-dark); text-decoration: none; transition: color 0.2s; }
+    #mobile-menu a:hover { color: var(--brown-mid); }
+    #mobile-close { position: absolute; top: 24px; right: 28px; font-size: 2rem; cursor: pointer; color: var(--brown-deep); background: none; border: none; }
+
+    /* ─── Ticker ─── */
+    .ticker-wrap { background: var(--brown-deep); overflow: hidden; padding: 12px 0; }
+    .ticker { display: flex; white-space: nowrap; animation: tickerScroll 28s linear infinite; }
+    .ticker-item { font-size: 0.85rem; font-weight: 600; color: #FEF3C7; padding: 0 36px; display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .ticker-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+    @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  </style>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div id="progress-bar" role="progressbar" aria-label="Page scroll progress"></div>
+
+<!-- Custom cursor (desktop only) -->
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<!-- Mobile menu -->
+<div id="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" aria-label="Close menu">&times;</button>
+  <a href="#hero" onclick="closeMobileMenu()">Home</a>
+  <a href="#menu" onclick="closeMobileMenu()">Menu</a>
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#reviews" onclick="closeMobileMenu()">Reviews</a>
+  <a href="#order" onclick="closeMobileMenu()">Order Now</a>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar" aria-label="Main navigation">
+  <div class="nav-logo">Shagun <span>Bakery</span></div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#info">Find Us</a></li>
+  </ul>
+  <a href="tel:+919297974050" class="nav-cta">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 6.75z"/></svg>
+    Call Now
+  </a>
+  <div class="nav-hamburger" id="hamburger" role="button" aria-label="Open menu" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <!-- Blobs -->
+  <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
+  <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
+  <div class="hero-blob hero-blob-3" aria-hidden="true"></div>
+
+  <!-- Floating pastry icons -->
+  <div class="pastry pastry-1" aria-hidden="true" role="img">🎂</div>
+  <div class="pastry pastry-2" aria-hidden="true" role="img">🍰</div>
+  <div class="pastry pastry-3" aria-hidden="true" role="img">🧁</div>
+  <div class="pastry pastry-4" aria-hidden="true" role="img">🥐</div>
+  <div class="pastry pastry-5" aria-hidden="true" role="img">🍩</div>
+
+  <div class="hero-content">
+    <div class="hero-badge reveal" style="transition-delay:0.1s">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+      4.7 Rating · 39 Reviews
+    </div>
+    <h1 class="hero-title reveal delay-100">
+      Baked with <span>Love,</span><br>Served with Joy
+    </h1>
+    <p class="hero-devanagari reveal delay-200">शगुन बेकरी — पटना</p>
+    <p class="hero-subtitle reveal delay-300">
+      Handcrafted cakes, fresh pastries & custom creations from Saguna More, Patna. Every bite tells a story of tradition and taste.
+    </p>
+    <div class="hero-actions reveal delay-400">
+      <a href="#menu" class="btn-primary">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+        View Menu
+      </a>
+      <a href="tel:+919297974050" class="btn-secondary">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 6.75z"/></svg>
+        092979 74050
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat reveal delay-400">
+        <div class="stat-num">4.7</div>
+        <div class="stat-label">Google Rating</div>
+      </div>
+      <div class="stat reveal delay-500">
+        <div class="stat-num">39+</div>
+        <div class="stat-label">Happy Reviews</div>
+      </div>
+      <div class="stat reveal delay-600">
+        <div class="stat-num">₹400</div>
+        <div class="stat-label">Starts From</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TICKER ═══ -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker">
+    <!-- duplicated for seamless loop -->
+    <span class="ticker-item"><span class="ticker-dot"></span> Fresh Cakes Daily</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Custom Designs</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Red Velvet Speciality</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Open till 11 PM</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Saguna More, Patna</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> 092979 74050</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> ₹400–600 Per Person</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> 4.7 ★ on Google</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Fresh Cakes Daily</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Custom Designs</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Red Velvet Speciality</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Open till 11 PM</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Saguna More, Patna</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> 092979 74050</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> ₹400–600 Per Person</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> 4.7 ★ on Google</span>
+  </div>
+</div>
+
+<!-- ═══ MENU ═══ -->
+<section id="menu">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:56px">
+      <p class="section-label reveal">Our Specialities</p>
+      <h2 class="section-title reveal delay-100" style="text-align:center">Menu Highlights</h2>
+      <p class="section-desc reveal delay-200" style="margin:0 auto;text-align:center">From celebration cakes to everyday treats — freshly baked with the finest ingredients.</p>
+    </div>
+    <div class="menu-grid">
+
+      <article class="menu-card reveal delay-100">
+        <div class="menu-card-img" style="background:linear-gradient(135deg,#FEE2E2,#FECACA)">
+          <span aria-hidden="true">🎂</span>
+          <span class="menu-tag">Best Seller</span>
+        </div>
+        <div class="menu-card-body">
+          <h3 class="menu-card-name">Red Velvet Cake</h3>
+          <p class="menu-card-desc">Velvety smooth layers with cream cheese frosting. Our most loved creation.</p>
+          <div class="menu-card-footer">
+            <span class="menu-price">₹650</span>
+            <button class="menu-add" aria-label="Add Red Velvet Cake to order">+</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="menu-card reveal delay-200">
+        <div class="menu-card-img" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)">
+          <span aria-hidden="true">🍰</span>
+          <span class="menu-tag">Custom</span>
+        </div>
+        <div class="menu-card-body">
+          <h3 class="menu-card-name">Designer Cakes</h3>
+          <p class="menu-card-desc">Beautiful custom designs for birthdays, weddings, and every celebration.</p>
+          <div class="menu-card-footer">
+            <span class="menu-price">₹800+</span>
+            <button class="menu-add" aria-label="Add Designer Cake to order">+</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="menu-card reveal delay-300">
+        <div class="menu-card-img" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5)">
+          <span aria-hidden="true">🧁</span>
+        </div>
+        <div class="menu-card-body">
+          <h3 class="menu-card-name">Cupcakes</h3>
+          <p class="menu-card-desc">Fluffy, frosted mini-cakes in assorted flavours — perfect for gifting.</p>
+          <div class="menu-card-footer">
+            <span class="menu-price">₹60/pc</span>
+            <button class="menu-add" aria-label="Add Cupcakes to order">+</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="menu-card reveal delay-100">
+        <div class="menu-card-img" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">
+          <span aria-hidden="true">🥐</span>
+        </div>
+        <div class="menu-card-body">
+          <h3 class="menu-card-name">Croissants & Pastries</h3>
+          <p class="menu-card-desc">Buttery, flaky pastries baked fresh every morning.</p>
+          <div class="menu-card-footer">
+            <span class="menu-price">₹40/pc</span>
+            <button class="menu-add" aria-label="Add Croissants to order">+</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="menu-card reveal delay-200">
+        <div class="menu-card-img" style="background:linear-gradient(135deg,#FDF4FF,#FAE8FF)">
+          <span aria-hidden="true">🍩</span>
+          <span class="menu-tag">Popular</span>
+        </div>
+        <div class="menu-card-body">
+          <h3 class="menu-card-name">Doughnuts</h3>
+          <p class="menu-card-desc">Glazed, sprinkled, and stuffed — a sweet bite of happiness.</p>
+          <div class="menu-card-footer">
+            <span class="menu-price">₹50/pc</span>
+            <button class="menu-add" aria-label="Add Doughnuts to order">+</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="menu-card reveal delay-300">
+        <div class="menu-card-img" style="background:linear-gradient(135deg,#FFF7ED,#FED7AA)">
+          <span aria-hidden="true">🍪</span>
+        </div>
+        <div class="menu-card-body">
+          <h3 class="menu-card-name">Cookies & Biscuits</h3>
+          <p class="menu-card-desc">Crunchy, chewy, and full of flavour. Great for chai time.</p>
+          <div class="menu-card-footer">
+            <span class="menu-price">₹30/pc</span>
+            <button class="menu-add" aria-label="Add Cookies to order">+</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-visual reveal-left">
+      <div class="about-circle" aria-hidden="true">
+        🎂
+        <div class="about-badge about-badge-1">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+          4.7 on Google
+        </div>
+        <div class="about-badge about-badge-2">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Open till 11 PM
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-right">
+      <p class="section-label">Our Story</p>
+      <h2 class="section-title">Patna's Favourite<br>Sweet Destination</h2>
+      <p class="section-desc">Located in the heart of Saguna More, Kaliket Nagar, Shagun Bakery has been crafting smiles through every cake, pastry and treat. Quality ingredients, love in every layer.</p>
+
+      <div class="about-features">
+        <div class="feature-item">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+          </div>
+          <div class="feature-text">
+            <h4>Freshly Baked Daily</h4>
+            <p>Every item is prepared fresh each day using quality ingredients.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+          </div>
+          <div class="feature-text">
+            <h4>Made with Love</h4>
+            <p>Each creation carries the warmth and care of our dedicated bakers.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+          </div>
+          <div class="feature-text">
+            <h4>Custom Orders Welcome</h4>
+            <p>Have a special occasion? We'll craft the perfect cake just for you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REVIEWS ═══ -->
+<section id="reviews">
+  <div class="reviews-header">
+    <div>
+      <p class="section-label reveal">What Customers Say</p>
+      <h2 class="section-title reveal delay-100">Customer Reviews</h2>
+    </div>
+    <div class="rating-big reveal delay-200">
+      <div class="rating-number">4.7</div>
+      <div>
+        <div class="rating-stars" aria-label="4.7 out of 5 stars">
+          <span class="rating-star" aria-hidden="true">★</span>
+          <span class="rating-star" aria-hidden="true">★</span>
+          <span class="rating-star" aria-hidden="true">★</span>
+          <span class="rating-star" aria-hidden="true">★</span>
+          <span class="rating-star" aria-hidden="true">★</span>
+        </div>
+        <p class="rating-count">Based on 39 Google Reviews</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reviews-grid">
+
+    <article class="review-card reveal delay-100">
+      <div class="review-header">
+        <div class="reviewer-avatar" style="background:#FEE2E2;color:#B91C1C" aria-hidden="true">BR</div>
+        <div class="reviewer-info">
+          <h4>Banty Raj</h4>
+          <p>6 months ago</p>
+        </div>
+      </div>
+      <div class="review-stars" aria-label="5 out of 5 stars">
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span>
+      </div>
+      <p class="review-text">"Red velvet cake is too good. I always prefer red velvet. No one can bake like Shagun Bakery!"</p>
+    </article>
+
+    <article class="review-card reveal delay-200">
+      <div class="review-header">
+        <div class="reviewer-avatar" style="background:#DCFCE7;color:#166534" aria-hidden="true">VS</div>
+        <div class="reviewer-info">
+          <h4>Vaidik Shaswat</h4>
+          <p>1 year ago</p>
+        </div>
+      </div>
+      <div class="review-stars" aria-label="5 out of 5 stars">
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span>
+      </div>
+      <p class="review-text">"Absolutely delighted with the cake I ordered! The design was exactly as pictured, the flavors were incredibly moist and fresh, and the quality was top-notch."</p>
+    </article>
+
+    <article class="review-card reveal delay-300">
+      <div class="review-header">
+        <div class="reviewer-avatar" style="background:#FEF3C7;color:#92400E" aria-hidden="true">PK</div>
+        <div class="reviewer-info">
+          <h4>Priya Kumari</h4>
+          <p>3 months ago</p>
+        </div>
+      </div>
+      <div class="review-stars" aria-label="5 out of 5 stars">
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span>
+      </div>
+      <p class="review-text">"Very tasty cakes and beautiful designs. My daughter's birthday cake was exactly what we wanted. Will definitely order again!"</p>
+    </article>
+
+    <article class="review-card reveal delay-100">
+      <div class="review-header">
+        <div class="reviewer-avatar" style="background:#EFF6FF;color:#1D4ED8" aria-hidden="true">AK</div>
+        <div class="reviewer-info">
+          <h4>Amit Kumar</h4>
+          <p>2 months ago</p>
+        </div>
+      </div>
+      <div class="review-stars" aria-label="4 out of 5 stars">
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" style="color:#D1D5DB" aria-hidden="true">★</span>
+      </div>
+      <p class="review-text">"Good quality cakes at reasonable prices. The chocolate cake was fresh and delicious. Nice place to get celebration cakes."</p>
+    </article>
+
+    <article class="review-card reveal delay-200">
+      <div class="review-header">
+        <div class="reviewer-avatar" style="background:#FDF4FF;color:#7E22CE" aria-hidden="true">RS</div>
+        <div class="reviewer-info">
+          <h4>Rohini Singh</h4>
+          <p>4 months ago</p>
+        </div>
+      </div>
+      <div class="review-stars" aria-label="5 out of 5 stars">
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span>
+      </div>
+      <p class="review-text">"Ordered a custom wedding anniversary cake — it was stunning. The cream was perfectly sweet and not too heavy. Loved it!"</p>
+    </article>
+
+    <article class="review-card reveal delay-300">
+      <div class="review-header">
+        <div class="reviewer-avatar" style="background:#ECFDF5;color:#065F46" aria-hidden="true">DM</div>
+        <div class="reviewer-info">
+          <h4>Deepak Mishra</h4>
+          <p>5 months ago</p>
+        </div>
+      </div>
+      <div class="review-stars" aria-label="5 out of 5 stars">
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
+        <span class="review-star" aria-hidden="true">★</span>
+      </div>
+      <p class="review-text">"Fresh cakes every time I visit. The pastries are my go-to snack after work. Keep up the great work, Shagun team!"</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══ INFO STRIP ═══ -->
+<section id="info" style="padding:64px 24px">
+  <div class="info-inner">
+
+    <div class="info-item reveal">
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+      </div>
+      <div>
+        <p class="info-label">Address</p>
+        <p class="info-value">Saguna More, Kaliket Nagar,<br>Patna, Bihar 801503</p>
+      </div>
+    </div>
+
+    <div class="info-item reveal delay-100">
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 6.75z"/></svg>
+      </div>
+      <div>
+        <p class="info-label">Phone</p>
+        <p class="info-value"><a href="tel:+919297974050" style="color:#FEF3C7;text-decoration:none">092979 74050</a></p>
+      </div>
+    </div>
+
+    <div class="info-item reveal delay-200">
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div>
+        <p class="info-label">Hours</p>
+        <p class="info-value">Open Daily<br>Closes at 11:00 PM</p>
+      </div>
+    </div>
+
+    <div class="info-item reveal delay-300">
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+      </div>
+      <div>
+        <p class="info-label">Price Range</p>
+        <p class="info-value">₹400 – ₹600 per person</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ ORDER CTA ═══ -->
+<section id="order">
+  <div class="order-inner">
+    <h2 class="reveal">Ready to Order<br>Something Sweet?</h2>
+    <p class="reveal delay-100">Call us directly or visit our bakery at Saguna More. Custom cake orders welcome — we love making special occasions even sweeter.</p>
+    <div class="order-actions reveal delay-200">
+      <a href="tel:+919297974050" class="btn-cream">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 6.75z"/></svg>
+        Call to Order
+      </a>
+      <a href="https://maps.app.goo.gl/J2CR+VP-Patna-Bihar" class="btn-outline-cream" target="_blank" rel="noopener noreferrer">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+        Get Directions
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">Shagun <span>Bakery</span></div>
+        <p class="footer-tagline">शगुन बेकरी — Baked with love at Saguna More, Patna. Crafting sweet memories since our opening.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:+919297974050">092979 74050</a></li>
+          <li><a href="#info">Saguna More, Patna</a></li>
+          <li><a href="#info">Bihar 801503</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Hours</h5>
+        <ul>
+          <li><a href="#info">Mon – Sun</a></li>
+          <li><a href="#info">Open Daily</a></li>
+          <li><a href="#info">Closes 11:00 PM</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Shagun Bakery. All rights reserved.</p>
+      <p>Saguna More, Patna, Bihar</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll progress ──
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (scrollTop / docHeight * 100) + '%';
+  }
+
+  // ── Navbar scroll state ──
+  const navbar = document.getElementById('navbar');
+  function updateNav() {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  }
+
+  // ── Scroll reveal ──
+  const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // ── Custom cursor (desktop only) ──
+  const cursorDot = document.getElementById('cursorDot');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  if (window.matchMedia('(pointer: fine)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      cursorDot.style.left = mouseX + 'px';
+      cursorDot.style.top = mouseY + 'px';
+    });
+    function animateCursor() {
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top = ringY + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    document.querySelectorAll('a, button, .menu-card, .review-card, [role="button"]').forEach(el => {
+      el.addEventListener('mouseenter', () => cursorRing.classList.add('hovered'));
+      el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovered'));
+    });
+  } else {
+    cursorDot.style.display = 'none';
+    cursorRing.style.display = 'none';
+  }
+
+  // ── Mobile menu ──
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileClose = document.getElementById('mobile-close');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') mobileMenu.classList.add('open'); });
+  mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  function closeMobileMenu() { mobileMenu.classList.remove('open'); }
+
+  // ── Scroll listener (batched) ──
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => { updateProgress(); updateNav(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // ── Number counter animation ──
+  function animateCounter(el, target, duration = 1400, isFloat = false) {
+    let start = 0; const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = isFloat ? start.toFixed(1) : Math.floor(start) + '+';
+      if (start >= target) { el.textContent = isFloat ? target.toFixed(1) : (target === 39 ? '39+' : target + '+'); clearInterval(timer); }
+    }, 16);
+  }
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const statNums = entry.target.querySelectorAll('.stat-num');
+        statNums.forEach(num => {
+          const text = num.textContent;
+          if (text.includes('4.7')) animateCounter(num, 4.7, 1000, true);
+          else if (text.includes('39')) animateCounter(num, 39, 1200, false);
+        });
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  const heroStats = document.querySelector('.hero-stats');
+  if (heroStats) statsObserver.observe(heroStats);
+</script>
+</body>
+</html>
